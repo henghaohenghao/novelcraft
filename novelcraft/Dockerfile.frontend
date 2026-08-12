@@ -1,0 +1,38 @@
+# NovelCraft 前端镜像（生产，多阶段构建）
+# NEXT_PUBLIC_* 是构建时变量，需在 build 时通过 --build-arg 传入
+
+# ====== 阶段1：构建 ======
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm config set registry https://registry.npmmirror.com && npm ci || npm install
+
+COPY frontend/ ./
+
+# 构建时注入前端可访问的变量（Next.js PUBLIC 变量只在构建时生效）
+ARG NEXT_PUBLIC_API_URL=""
+ARG NEXT_PUBLIC_WS_URL=""
+ARG BACKEND_ORIGIN="http://backend:8000"
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
+ENV BACKEND_ORIGIN=$BACKEND_ORIGIN
+
+# 直接用 node 调用 next CLI，绕过 .bin 软链权限问题
+RUN node node_modules/next/dist/bin/next build
+
+# ====== 阶段2：运行 ======
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# 仅复制运行所需文件，镜像更小
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
+EXPOSE 3000
+
+# 直接用 node 调用 next start，避免 .bin 权限问题
+CMD ["node", "node_modules/next/dist/bin/next", "start"]

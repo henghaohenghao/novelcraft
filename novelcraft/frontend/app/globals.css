@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", system-ui, sans-serif;
+  background-color: #F5F5F0;
+  color: #2A2420;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-claude-dark text-white rounded-lg hover:bg-claude-brown transition-all duration-200 font-medium;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 border-2 border-claude-dark text-claude-dark rounded-lg hover:bg-claude-dark hover:text-white transition-all duration-200 font-medium;
+  }
+
+  .input-base {
+    @apply w-full px-4 py-3 border border-claude-border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-claude-brown focus:border-transparent transition-all;
+  }
+
+  .card {
+    @apply bg-white rounded-xl border border-claude-border hover:shadow-lg transition-all duration-200;
+  }
+}

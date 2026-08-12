@@ -1,0 +1,63 @@
+# NovelCraft 可视化监控扩展
+# 用法：docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up -d
+#
+# 访问地址：
+#   - Grafana (统一监控):          http://your-server:3001 (admin/admin)
+#   - Prometheus:                  http://your-server:9090
+
+services:
+  # Grafana 统一监控面板
+  grafana:
+    image: grafana/grafana:latest
+    container_name: novelcraft-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+  # Prometheus 数据采集
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: novelcraft-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    restart: unless-stopped
+
+  # PostgreSQL Exporter (为 Prometheus 提供指标)
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: novelcraft-postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://novelcraft:novelcraft123@postgres:5432/novelcraft?sslmode=disable"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+  # Redis Exporter
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: novelcraft-redis-exporter
+    environment:
+      REDIS_ADDR: redis:6379
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+volumes:
+  grafana_data:
+  prometheus_data:

@@ -1,0 +1,68 @@
+# 训练配置示例
+
+# 可以复制此文件为 config.yaml 并根据需要修改参数
+
+# 基础模型配置
+model:
+  type: qwen3-8b-instruct
+  path: null  # 如果本地有模型，填写路径；否则会自动下载
+
+# LoRA 配置
+lora:
+  rank: 8  # 推荐: 8-16，越大效果越好但训练越慢
+  alpha: 32  # 通常设置为 rank * 2 ~ rank * 4
+  dropout: 0.05
+  target_modules: ALL  # 或指定: ["q_proj", "k_proj", "v_proj", "o_proj"]
+
+# 训练参数
+training:
+  num_epochs: 3
+  batch_size: 4
+  gradient_accumulation_steps: 4  # 实际批次 = batch_size * accumulation_steps
+  learning_rate: 1e-4
+  warmup_ratio: 0.05
+  max_length: 2048
+
+# 硬件配置
+hardware:
+  bf16: true  # 使用 BF16 训练（推荐）
+  gradient_checkpointing: true  # 节省显存
+  # 单卡训练通常够用；多卡可以用 deepspeed
+
+# 数据集配置
+dataset:
+  train_ratio: 0.9  # 训练集比例
+  val_ratio: 0.1    # 验证集比例
+
+# 输出配置
+output:
+  dir: output
+  logging_steps: 10
+  save_strategy: epoch  # 每个 epoch 保存一次
+  save_total_limit: 3   # 只保留最近 3 个 checkpoint
+
+# 风格配置
+styles:
+  - id: gulong
+    name: 古龙
+    dataset: dataset/gulong_train.jsonl
+
+  - id: caowenxuan
+    name: 曹文轩
+    dataset: dataset/caowenxuan_train.jsonl
+
+  - id: jinyong
+    name: 金庸
+    dataset: dataset/jinyong_train.jsonl
+
+  - id: liubixin
+    name: 刘慈欣
+    dataset: dataset/liubixin_train.jsonl
+
+  - id: wangxiaobo
+    name: 王小波
+    dataset: dataset/wangxiaobo_train.jsonl
+
+  - id: luxun
+    name: 鲁迅
+    dataset: dataset/luxun_train.jsonl

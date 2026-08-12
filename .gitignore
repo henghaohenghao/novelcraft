@@ -1,0 +1,106 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+.next/
+out/
+
+# Docker
+.dockerignore
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# Data
+data/
+*.csv
+*.json.bak
+
+# Model files (trained weights)
+*.safetensors
+*.bin
+*.pt
+*.pth
+outputs/*/
+!novelcraft/backend/models/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Coverage
+.coverage
+htmlcov/
+
+# pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# Trae IDE
+.trae/
+
+# Frontend build cache
+frontend/.npm-cache/
+frontend/tsconfig.tsbuildinfo
+
+# Personal docs (root level)
+*.md
+!novelcraft/**/*.md
+!README.md
+
+# Training data and results
+novelcraft/training/dataset/
+novelcraft/training/results/
+novelcraft/training/image/
